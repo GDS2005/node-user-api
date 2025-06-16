@@ -1,12 +1,30 @@
-const http = require('http');
+const express = require('express')
+const cors = require('cors')
+const helmet = require('helmet')
+const rateLimit = require("express-rate-limit");
+const morgan = require("morgan")
+require('dotenv').config()
 
-const port = 3000
+const app = express()
 
-const server = http.createServer((req, res) =>{
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end('Server is active.\n');
+const port = process.env.PORT || 5000
+
+app.use(morgan('dev'))
+
+/* SECURITY */
+app.use(cors())
+app.use(helmet())
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
 });
 
-server.listen(port, () => {
-    console.log(`Node.js server listining on http://localhost:${port}/`);
-});
+app.use(limiter)
+
+/* SERVER SETTING */
+app.use('/v1', require('./routes/v1/'));
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
