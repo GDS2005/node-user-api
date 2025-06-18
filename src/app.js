@@ -7,6 +7,8 @@ require('dotenv').config()
 
 const app = express()
 
+app.use(express.json());
+
 const port = process.env.PORT || 5000
 
 app.use(morgan('dev'))
@@ -23,6 +25,7 @@ const limiter = rateLimit({
 app.use(limiter)
 
 /* SERVER SETTING */
+
 app.use('/v1', require('./routes/v1/'));
 
 app.listen(port, () => {
